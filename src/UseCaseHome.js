@@ -12,7 +12,7 @@ function Main (props) {
   }, []);
 
   return (
-    <Grid.Column width={8}>
+    <Grid.Column width={16}>
       Ares-Chain Use case.
     </Grid.Column>
   );

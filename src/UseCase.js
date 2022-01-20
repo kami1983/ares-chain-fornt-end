@@ -28,7 +28,7 @@ function Main (props) {
   }, []);
 
   return (
-      <Grid.Column width={8}>
+      <Grid.Column width={16}>
           <BrowserRouter>
               <div className="App">
                   <h1>Welcome to React Router!</h1>
