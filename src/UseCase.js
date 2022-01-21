@@ -10,6 +10,10 @@ import NodeInfo from "./NodeInfo";
 import Metadata from "./Metadata";
 import UseCaseStaking from "./UseCaseStaking";
 import UseCaseHome from "./UseCaseHome";
+import UseCaseChainPriceData from "./UseCaseChainPriceData";
+import UseCaseAbnormalPriceData3 from "./UseCaseAbnormalPriceData3";
+import UseCaseValidatorRewardOfOracle from "./UseCaseValidatorRewardOfOracle";
+import UseCaseAskPriceData from "./UseCaseAskPriceData";
 
 
 function Main (props) {
@@ -31,11 +35,15 @@ function Main (props) {
       <Grid.Column width={16}>
           <BrowserRouter>
               <div className="App">
-                  <h1>Welcome to React Router!</h1>
-                  <Link to="/case_staking">case_staking</Link>
+                  <h1><Link to="/">前端测试用例</Link></h1>
                   <Routes>
                       <Route path="/" element={<UseCaseHome />} />
                       <Route path="case_staking" element={<UseCaseStaking />} />
+                      <Route path="chain_price_data" element={<UseCaseChainPriceData />} />
+                      <Route path="abnormal_price_data" element={<UseCaseAbnormalPriceData3 />} />
+                      <Route path="ask_price_data" element={<UseCaseAskPriceData />} />
+                      <Route path="validator_reward_of_oracle" element={<UseCaseValidatorRewardOfOracle />} />
+
                   </Routes>
               </div>
           </BrowserRouter>

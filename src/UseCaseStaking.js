@@ -153,7 +153,7 @@ function Main (props) {
         <Grid.Column width={16}>
             <h1>Ares - Use cases staking.</h1>
             <GridRow>
-                <h3>等待中的验证人：</h3>
+                <h2>等待中的验证人：</h2>
                 {waitValidatorSessionKeyList.map(waitAcc => <Container fluid>
                     <div>
                         <div>验证人：{waitAcc.stash_id} <Rating icon='star' clearable defaultRating={0} maxRating={3}/></div>
