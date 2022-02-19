@@ -18,6 +18,15 @@ import {
 import { useSubstrate } from './substrate-lib';
 import {consensus} from "@polkadot/types/interfaces/definitions";
 
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
+
+
 
 function Main (props) {
   const { api } = useSubstrate();
@@ -27,8 +36,58 @@ function Main (props) {
   const accounts = keyring.getPairs();
 
   const [aresOraclePurchasedAvgTrace, setAresOraclePurchasedAvgTrace] = useState([]);
-  const [aresOraclePurchasedAvgPrice, setAresOraclePurchasedAvgPrice] = useState([]);
+  const [aresOraclePurchasedAvgPrice, setAresOraclePurchasedAvgPrice] = useState(new Map);
+  const [purchasedEvent, setPurchasedEvent] = useState(new Map);
+  const [purchasedEvents, setPurchasedEvents] = useState([]);
 
+  const client = new ApolloClient({
+    uri: 'http://localhost:3001',
+    cache: new InMemoryCache()
+  });
+
+  // 获取购买人信息，该信息通过Subquery进行查询。
+  async function loadNewPurchasedRequestEventBySQ(purchase_id) {
+    client.query({
+      query: gql`
+        query{
+          newPurchasedRequestEvent(id: "${purchase_id}"){
+            id,
+            prepayments,
+            accountId
+          }
+        }
+      `
+    }).then(result => {
+      purchasedEvent.set(purchase_id, result.data.newPurchasedRequestEvent);
+      setPurchasedEvent(purchasedEvent);
+    });
+  }
+
+  async function loadNewPurchasedRequestEvents() {
+    client.query({
+      query: gql`
+        query{
+          newPurchasedRequestEvents(last:1000, orderBy: ID_ASC){
+            nodes {
+              id,
+              prepayments,
+              accountId,
+              offer,
+              createBn,
+              submitThreshold,
+              maxDuration,
+              requestKeys,
+              avgResult{
+                resultList
+              }
+            }
+          }
+        }
+      `
+    }).then(result => {
+      setPurchasedEvents(result.data.newPurchasedRequestEvents.nodes);
+    });
+  }
 
   // aresOracle.purchasedAvgTrace
   // 获取购买均价记录
@@ -48,48 +107,73 @@ function Main (props) {
   // 聚合的均价结果
   async function loadAresOraclePurchasedAvgPrice (setStatus) {
     const exposures = await api.query.aresOracle.purchasedAvgPrice.entries();
-    let finalResult = [];
+    let finalResult = new Map();
     exposures.forEach(([key, exposure]) => {
-      const tmp = key.args.map((k) => k.toHuman());
-      const tmpBn = exposure.toHuman();
-      // finalResult.push({purchased_id: tmpBn, create_bn: tmpBn});
-      let oldTmpData = finalResult[tmpBn[0]] ? finalResult[tmpBn[0]] : [];
-      // oldTmpData.push({price_key: tmpBn[1]});
-      // finalResult.append(tmpBn[0], oldTmpData);
-      console.log(" tmp[0] =  ", tmp[0]);
-      // finalResult[tmp[0]] = oldTmpData;
-      finalResult.push({price_key: tmpBn[0]});
+      const keys = key.args.map((k) => k.toHuman());
+      const values = exposure.toHuman();
+      const saveValue = {
+        price_key: keys[1],
+        create_bn: values.create_bn,
+        price_data: values.price_data,
+        reached_type: values.reached_type
+      };
+      let saveValueList = finalResult.has(keys[0]) ? finalResult.get(keys[0]) : [];
+      saveValueList.push(saveValue);
+      finalResult.set(keys[0], saveValueList);
+      loadNewPurchasedRequestEventBySQ(keys[0]);
     });
-    console.log("finalResult = ", finalResult, finalResult.length);
     setStatus(finalResult);
   }
 
   function getPurchasedAvgPrice(purchaseId) {
-    if(aresOraclePurchasedAvgPrice[purchaseId]){
-      return aresOraclePurchasedAvgPrice[purchaseId].price_key
+    if(aresOraclePurchasedAvgPrice.has(purchaseId)){
+      return aresOraclePurchasedAvgPrice.get(purchaseId);
     }
-    return '-';
+    return [];
+  }
+
+  function getNewPurchasedEvent(purchaseId) {
+    if(purchasedEvent.has(purchaseId)){
+      const result = purchasedEvent.get(purchaseId);
+      console.log(` debug - getNewPurchasedEvent = `, result)
+      return purchasedEvent.get(purchaseId);
+    }
+    return null;
   }
 
   useEffect(async () => {
-    loadAresOraclePurchasedAvgTrace(setAresOraclePurchasedAvgTrace);
-    loadAresOraclePurchasedAvgPrice(setAresOraclePurchasedAvgPrice);
+
+    // loadAresOraclePurchasedAvgTrace(setAresOraclePurchasedAvgTrace);
+    // loadAresOraclePurchasedAvgPrice(setAresOraclePurchasedAvgPrice);
+    loadNewPurchasedRequestEvents();
+    console.log("RUN -- 2");
   }, []);
 
   return (
         <Grid.Column width={16}>
-            <h2>付费询价数据请求.</h2>
+            <h2>Ask requests.</h2>
             <Table celled striped size='small'>
               <Table.Body>
                 <Table.Row>
-                  <Table.Cell>成功购买ID</Table.Cell>
-                  <Table.Cell>聚合区块</Table.Cell>
-                  <Table.Cell>INFO</Table.Cell>
+                  <Table.Cell width={2}>Order id</Table.Cell>
+                  <Table.Cell width={2}>Who</Table.Cell>
+                  <Table.Cell width={2}>Apply block</Table.Cell>
+                  <Table.Cell width={1}>Purchase quantity</Table.Cell>
+                  <Table.Cell width={2}>Prepaid</Table.Cell>
+                  <Table.Cell width={7}>Aggregate</Table.Cell>
                 </Table.Row>
-                {aresOraclePurchasedAvgTrace.map(data => <Table.Row key={data.purchased_id}>
-                  <Table.Cell>{data.purchased_id}</Table.Cell>
-                  <Table.Cell>{data.create_bn}</Table.Cell>
-                  <Table.Cell>{getPurchasedAvgPrice(data.purchased_id)}</Table.Cell>
+                {purchasedEvents.map(data => <Table.Row key={data.id}>
+                  <Table.Cell><Input value={data.id} /></Table.Cell>
+                  <Table.Cell>
+                    <Input value={data.accountId} />
+                  </Table.Cell>
+                  <Table.Cell>{data.createBn}</Table.Cell>
+                  <Table.Cell>{data.requestKeys.length}</Table.Cell>
+                  <Table.Cell>{data.prepayments}</Table.Cell>
+                  <Table.Cell>{data.avgResult.resultList.map(sub_data=><div>
+                    {sub_data.price_key}#Count:[{sub_data.respondents.length}]#[{sub_data.reached_type == 1?'Full':'Part'}]#Block:{sub_data.create_bn}
+                    <hr/>
+                  </div>)}</Table.Cell>
                 </Table.Row>)}
               </Table.Body>
             </Table>

@@ -16,8 +16,9 @@ import {
 } from 'semantic-ui-react';
 
 import { useSubstrate } from './substrate-lib';
-import {Keyring} from "@polkadot/api";
-import {u8aToHex} from "@polkadot/util";
+import { Keyring } from '@polkadot/api';
+import { u8aToHex, numberToU8a } from '@polkadot/util';
+// import { stringToU8a, u8aToHex } from '@polkadot/util';
 
 function Main (props) {
   const { api } = useSubstrate();
@@ -27,6 +28,7 @@ function Main (props) {
   const [checkAddress, setCheckAddress] = useState('');
   const [formState, setFormState] = useState({ addressTo: '', amount: 0 });
   const [preCheckTaskList, setPreCheckTaskList] = useState([]);
+  const [aresAuthoritiesList, setAresAuthoritiesList] = useState(['C', 'D']);
   const [finalPerCheckStatus, setFinalPerCheckStatus] = useState([]);
   const [waitValidatorList, setWaitValidatorList] = useState([]);
   const [waitValidatorSessionKeyList, setWaitValidatorSessionKeyList] = useState([]);
@@ -48,14 +50,13 @@ function Main (props) {
 
   async function loadPreCheckTaskList () {
     const authorities = await api.query.aresOracle.preCheckTaskList();
-    setPreCheckTaskList(authorities);
+    await setPreCheckTaskList(authorities);
     return authorities;
   }
 
   async function loadAresAuthorities () {
     const authorities = await api.query.aresOracle.authorities();
-    setPreCheckTaskList(authorities);
-    return authorities;
+    await setAresAuthoritiesList(authorities.toHuman());
   }
 
   async function loadFinalPerCheckResult (address) {
@@ -75,25 +76,33 @@ function Main (props) {
   // Offchain key : 0x6172652d6f63773a3a6c6f63616c5f686f73745f6b6579
   // 0x0efb90aee5f197d6f710f886924260e98e65d2b09ec04c301362bc476b4d9e6f7c1a7836044da7489fb6ac28ade841ec27d9eb1e5e8682dea96ff637e8db179a20a8cd33d9bf55d81179422d94b49ff93c2b9d3980b08aaada4c01f8351f6157021a58ea857a5f2819c0c108ef01c1b8d106c5625dd91d396f8da16834bd56860c9af5c68b4c313686ffffddd74e87e729332c5d262f561919ea4c48be736e1402
   async function loadOracleLocalXRay () {
-    const exposures = await api.query.aresOracle.localXRay.entries();
-    const resultList = [];
-    exposures.forEach(([key, exposure]) => {
-      const tmpKey = key.args.map((k) => k.toHuman());
-      const tmpExposure = exposure.toHuman();
-      resultList.push(
-        {
-          host_key: tmpKey[0],
-          commit_bn: tmpExposure[0],
-          warehouse: tmpExposure[1],
-          authorities: tmpExposure[2],
-          full_hex: exposure.toHex()
+    setAresAuthoritiesList(async perv => {
+      console.log('########AA####', perv);
+      const exposures = await api.query.aresOracle.localXRay.entries();
+      const resultList = [];
+      exposures.forEach(([key, exposure]) => {
+        const tmpKey1 = key.args.map((k) => u8aToHex(k.toU8a()));
+        const tmpKey2 = key.args.map((k) => k.toString());
+        const tmpExposure = exposure.toHuman();
+        if (hasAValidator(tmpExposure[2], perv)) {
+          console.log("RUN YES......")
         }
-      );
+        resultList.push(
+          {
+            host_key1: tmpKey1[0],
+            host_key2: tmpKey2[0],
+            commit_bn: tmpExposure[0],
+            warehouse: tmpExposure[1],
+            authorities: tmpExposure[2],
+            is_validator: hasAValidator(tmpExposure[2], perv),
+            full_hex: exposure.toHex()
+          }
+        );
+        setLocalXray(resultList);
+      });
     });
 
-    // console.log('AAA == ', decode_value);
-    // console.log('BBB == ', u8aToHex(keyring.decodeAddress('4SJT3cozQ7Uv31M8A1q5ysarUEtv58xcoA5GgWBnoZ3b7G5w')));
-    return resultList;
+    // return resultList;
   }
 
   async function loadSessionValidators () {
@@ -126,6 +135,19 @@ function Main (props) {
     return `「${status.value}」`;
   }
 
+  function hasAValidator (authroity_arr, validator_arr) {
+    let find_validator = false;
+    authroity_arr.map(authroity_id => {
+      validator_arr.map(arr => {
+        if (authroity_id == arr[1]) {
+          find_validator = true;
+          return find_validator;
+        }
+      });
+    });
+    return find_validator;
+  }
+
   useEffect(async () => {
     console.log('addressTo = ', addressTo);
     console.log('amount = ', amount);
@@ -133,8 +155,12 @@ function Main (props) {
     // get waiting list
     if (!initStatus) {
       setInitStatus(true);
+      console.log('RUN loadAresAuthorities ...');
+      await loadAresAuthorities();
+      console.log('RUN loadPreCheckTaskList ...');
       await loadPreCheckTaskList();
-      await setLocalXray(await loadOracleLocalXRay());
+      console.log('RUN loadOracleLocalXRay ...');
+      await loadOracleLocalXRay();
       await setWaitValidatorList(await countStakingWaitValidators());
     }
 
@@ -153,12 +179,12 @@ function Main (props) {
         <Grid.Column width={16}>
             <h1>Ares - Use cases staking.</h1>
             <GridRow>
-                <h2>等待中的验证人：</h2>
+                <h2>Waiting Validator</h2>
                 {waitValidatorSessionKeyList.map(waitAcc => <Container fluid>
                     <div>
-                        <div>验证人：{waitAcc.stash_id} <Rating icon='star' clearable defaultRating={0} maxRating={3}/></div>
+                        <div>Validator: {waitAcc.stash_id} <Rating icon='star' clearable defaultRating={0} maxRating={3}/></div>
                         <div>Final Check Result: {getFinalStatus(waitAcc.stash_id)}</div>
-                        <div>Session key：<Input fluid value={waitAcc.session_key.value.toHex()}/></div>
+                        <div>Session key: <Input fluid value={waitAcc.session_key.value.toHex()}/></div>
                     </div>
                     <div>----</div>
                 </Container>)}
@@ -166,54 +192,50 @@ function Main (props) {
             <GridRow>
                 <Form>
                     <GridRow>
-                        <h3>提审任务列表：</h3>
+                        <h3>Audit Task List</h3>
                         <div>preCheckTaskList:</div>
                         {preCheckTaskList.map(account =>
                             <Container>
-                                <div>验证人：{account[0].toHuman()} <Rating icon='star' clearable defaultRating={0}
+                                <div>Validator：{account[0].toHuman()} <Rating icon='star' clearable defaultRating={0}
                                                                         maxRating={3}/></div>
-                                <div>Auth：{account[1].toHuman()}</div>
-                                <div>AuthHex：{account[1].toHex()}</div>
-                                <div>提审区块：{account[2].toHuman()}</div>
+                                <div>Auth: {account[1].toHuman()}</div>
+                                <div>AuthHex: {account[1].toHex()}</div>
+                                <div>Audit BN: {account[2].toHuman()}</div>
                                 <div>----</div>
                             </Container>
                         )}
                     </GridRow>
-                    {/*<Form.Field>*/}
-                    {/*    <Input*/}
-                    {/*        fluid*/}
-                    {/*        label='To'*/}
-                    {/*        type='text'*/}
-                    {/*        placeholder='address'*/}
-                    {/*        value={checkAddress.value}*/}
-                    {/*        onChange={setCheckAddress}*/}
-                    {/*    />*/}
-                    {/*</Form.Field>*/}
-                    {/*<Form.Field style={{ textAlign: 'center' }}>*/}
-                    {/*    <Button>Check</Button>*/}
-                    {/*</Form.Field>*/}
                 </Form>
             </GridRow>
            <GridRow>
-            <h3>验证人Local数据：</h3>
-            {localXRay.map(hostInfo => <Container fluid>
-              <div>
-                <div>节点HostKey：{hostInfo.host_key} <Rating icon='star' clearable defaultRating={0} maxRating={3}/></div>
-                <div>提交区块: {hostInfo.commit_bn} , Era = {hostInfo.commit_bn/600}</div>
-                <div>节点Warehouse: {hostInfo.warehouse}</div>
-                <div>本地Ares authoritys: {hostInfo.authorities.map(authority => <div>
-                  <div>{authority}</div>
-                  <div>ToPublic: {u8aToHex(keyring.decodeAddress(authority))} </div>
-                </div>)}</div>
-              </div>
-              <div>----</div>
-            </Container>)}
+            <h3>Validator Local Data:</h3>
+             {localXRay.map(hostInfo =>{
+               return !hostInfo.is_validator? <Container fluid>
+                 <div>
+                   <div>HostKey: {hostInfo.host_key1} # {hostInfo.host_key2} # {hostInfo.is_validator?"YES":"NO"}<Rating icon='star' clearable defaultRating={0} maxRating={3}/></div>
+                   <div>Event BN: {hostInfo.commit_bn}</div>
+                   <div>Warehouse: {hostInfo.warehouse}</div>
+                   <div>Ares authoritys: {hostInfo.authorities.map(authority => <div>
+                     <div>{authority}</div>
+                     <div>ToPublic: {u8aToHex(keyring.decodeAddress(authority))} </div>
+                   </div>)}</div>
+                 </div>
+                 <div>----</div>
+               </Container>:'';
+             })}
+            {/* {localXRay.map(hostInfo =>   <Container fluid>*/}
+            {/*  <div>*/}
+            {/*    <div>HostKey: {hostInfo.host_key1} # {hostInfo.host_key2} # {hostInfo.is_validator?"YES":"NO"}<Rating icon='star' clearable defaultRating={0} maxRating={3}/></div>*/}
+            {/*    <div>Event BN: {hostInfo.commit_bn}</div>*/}
+            {/*    <div>Warehouse: {hostInfo.warehouse}</div>*/}
+            {/*    <div>Ares authoritys: {hostInfo.authorities.map(authority => <div>*/}
+            {/*      <div>{authority}</div>*/}
+            {/*      <div>ToPublic: {u8aToHex(keyring.decodeAddress(authority))} </div>*/}
+            {/*    </div>)}</div>*/}
+            {/*  </div>*/}
+            {/*  <div>----</div>*/}
+            {/*</Container>)}*/}
            </GridRow>
-            {/* <GridRow> */}
-            {/*    <h3>提审中的列表：</h3> */}
-            {/*    <div>preCheckTaskList:</div> */}
-            {/*    <div>finalPerCheckResult:</div> */}
-            {/* </GridRow> */}
         </Grid.Column>
   );
 }

@@ -103,18 +103,18 @@ function Main (props) {
 
   return (
         <Grid.Column width={16}>
-            <h2>链上报价数据.</h2>
+            <h2>On-chain price data.</h2>
             <Table celled striped size='small'>
               <Table.Body>
                 <Table.Row>
                   <Table.Cell>PriceKey</Table.Cell>
                   <Table.Cell>PriceToken</Table.Cell>
-                  <Table.Cell>请求间隔(区块)</Table.Cell>
-                  <Table.Cell>预定精度</Table.Cell>
-                  <Table.Cell>价格整数</Table.Cell>
-                  <Table.Cell>实际精度</Table.Cell>
-                  <Table.Cell>最后报价人</Table.Cell>
-                  <Table.Cell>跳块号</Table.Cell>
+                  <Table.Cell>Request interval (block)</Table.Cell>
+                  <Table.Cell>Pre accuracy</Table.Cell>
+                  <Table.Cell>Price integer</Table.Cell>
+                  <Table.Cell>Actual accuracy</Table.Cell>
+                  <Table.Cell>Last bidder</Table.Cell>
+                  <Table.Cell>Jump BN</Table.Cell>
                 </Table.Row>
                 {aresOraclePricesRequests.map(data=><Table.Row key={data.price_key}>
                   <Table.Cell>{data.price_key}</Table.Cell>

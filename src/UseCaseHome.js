@@ -14,11 +14,12 @@ function Main (props) {
 
   return (
     <Grid.Column width={16}>
-      <Grid.Row><Link to="/case_staking">Ares-Oracle &amp Staking &amp Session - 链上数据核验工具</Link></Grid.Row>
-      <Grid.Row><Link to="/chain_price_data">Ares-Oracle - 链上报价数据</Link></Grid.Row>
-      <Grid.Row><Link to="/abnormal_price_data">Ares-Oracle - 异常报价数据</Link></Grid.Row>
-      <Grid.Row><Link to="/ask_price_data">Ares-Oracle - 付费询价数据请求</Link></Grid.Row>
-      <Grid.Row><Link to="/validator_reward_of_oracle">Ares-Oracle - 验证人奖励[Oracle]</Link></Grid.Row>
+      <Grid.Row><Link to="/case_staking">Ares-Oracle & Staking & Session - Validator check tools</Link></Grid.Row>
+      <Grid.Row><Link to="/chain_price_data">Ares-Oracle - On-chain price data</Link></Grid.Row>
+      <Grid.Row><Link to="/abnormal_price_data">Ares-Oracle - Abnormal price data</Link></Grid.Row>
+      <Grid.Row><Link to="/ask_price_data">Ares-Oracle - Paid ask request</Link></Grid.Row>
+      <Grid.Row><Link to="/pre_check_data">Ares-Oracle - Validator Audit</Link></Grid.Row>
+      <Grid.Row><Link to="/validator_reward_of_oracle">Ares-Oracle - Validator Reward[Oracle]</Link></Grid.Row>
     </Grid.Column>
   );
 }

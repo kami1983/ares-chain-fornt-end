@@ -14,6 +14,7 @@ import UseCaseChainPriceData from "./UseCaseChainPriceData";
 import UseCaseAbnormalPriceData3 from "./UseCaseAbnormalPriceData3";
 import UseCaseValidatorRewardOfOracle from "./UseCaseValidatorRewardOfOracle";
 import UseCaseAskPriceData from "./UseCaseAskPriceData";
+import UseCasePreCheckData from "./UseCasePreCheckData";
 
 
 function Main (props) {
@@ -35,7 +36,7 @@ function Main (props) {
       <Grid.Column width={16}>
           <BrowserRouter>
               <div className="App">
-                  <h1><Link to="/">前端测试用例</Link></h1>
+                  <h1><Link to="/">Test case.</Link></h1>
                   <Routes>
                       <Route path="/" element={<UseCaseHome />} />
                       <Route path="case_staking" element={<UseCaseStaking />} />
@@ -43,7 +44,7 @@ function Main (props) {
                       <Route path="abnormal_price_data" element={<UseCaseAbnormalPriceData3 />} />
                       <Route path="ask_price_data" element={<UseCaseAskPriceData />} />
                       <Route path="validator_reward_of_oracle" element={<UseCaseValidatorRewardOfOracle />} />
-
+                      <Route path="pre_check_data" element={<UseCasePreCheckData />} />
                   </Routes>
               </div>
           </BrowserRouter>
