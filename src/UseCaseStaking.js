@@ -101,8 +101,6 @@ function Main (props) {
         setLocalXray(resultList);
       });
     });
-
-    // return resultList;
   }
 
   async function loadSessionValidators () {
