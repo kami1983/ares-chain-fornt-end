@@ -12,10 +12,23 @@ import UseCaseStaking from "./UseCaseStaking";
 import UseCaseHome from "./UseCaseHome";
 import UseCaseChainPriceData from "./UseCaseChainPriceData";
 import UseCaseAbnormalPriceData3 from "./UseCaseAbnormalPriceData3";
-import UseCaseValidatorRewardOfOracle from "./UseCaseValidatorRewardOfOracle";
+import UseCaseValidatorRewardOfOracle from "./Demo/UseCaseValidatorRewardOfOracle";
 import UseCaseAskPriceData from "./UseCaseAskPriceData";
 import UseCasePreCheckData from "./UseCasePreCheckData";
 
+import {
+    ApolloClient,
+    InMemoryCache,
+    ApolloProvider,
+    useQuery,
+    gql
+} from "@apollo/client";
+import UseCasePaidOrderList from "./Demo/UseCasePaidOrderList";
+
+const client = new ApolloClient({
+    uri: 'http://localhost:3001',
+    cache: new InMemoryCache()
+});
 
 function Main (props) {
   const { api } = useSubstrate();
@@ -33,22 +46,25 @@ function Main (props) {
   }, []);
 
   return (
-      <Grid.Column width={16}>
-          <BrowserRouter>
-              <div className="App">
-                  <h1><Link to="/">Test case.</Link></h1>
-                  <Routes>
-                      <Route path="/" element={<UseCaseHome />} />
-                      <Route path="case_staking" element={<UseCaseStaking />} />
-                      <Route path="chain_price_data" element={<UseCaseChainPriceData />} />
-                      <Route path="abnormal_price_data" element={<UseCaseAbnormalPriceData3 />} />
-                      <Route path="ask_price_data" element={<UseCaseAskPriceData />} />
-                      <Route path="validator_reward_of_oracle" element={<UseCaseValidatorRewardOfOracle />} />
-                      <Route path="pre_check_data" element={<UseCasePreCheckData />} />
-                  </Routes>
-              </div>
-          </BrowserRouter>
-      </Grid.Column>
+      <ApolloProvider client={client}>
+          <Grid.Column width={16}>
+              <BrowserRouter>
+                  <div className="App">
+                      <h1><Link to="/">Test case.</Link></h1>
+                      <Routes>
+                          <Route path="/" element={<UseCaseHome />} />
+                          <Route path="case_staking" element={<UseCaseStaking />} />
+                          <Route path="chain_price_data" element={<UseCaseChainPriceData />} />
+                          <Route path="abnormal_price_data" element={<UseCaseAbnormalPriceData3 />} />
+                          <Route path="ask_price_data" element={<UseCaseAskPriceData />} />
+                          <Route path="validator_reward_of_oracle" element={<UseCaseValidatorRewardOfOracle apollo_client={client} />} />
+                          <Route path="pre_check_data" element={<UseCasePreCheckData />} />
+                          <Route path="paid_order_list" element={<UseCasePaidOrderList />} />
+                      </Routes>
+                  </div>
+              </BrowserRouter>
+          </Grid.Column>
+      </ApolloProvider>
   );
 }
 

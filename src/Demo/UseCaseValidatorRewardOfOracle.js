@@ -15,11 +15,14 @@ import {
   Rating, Tab
 } from 'semantic-ui-react';
 
-import { useSubstrate } from './substrate-lib';
+import { gql, useQuery, getApolloContext } from "@apollo/client";
+
+import { useSubstrate } from '../substrate-lib';
+import {ApolloProvider} from "@apollo/client/react/context/ApolloProvider";
 
 function Main (props) {
   const { api } = useSubstrate();
-  const { accountPair } = props;
+  const { accountPair, apollo_client } = props;
 
   const { keyring } = useSubstrate();
   const accounts = keyring.getPairs();
@@ -31,6 +34,21 @@ function Main (props) {
   const [askEraPoint, setAskEraPoint] = useState(new Map);
   const [balancePerPoint, setBalancePerPoint] = useState(new Map);
   const [askEraPointInfo, setAskEraPointInfo] = useState([]);
+  const [totalPurchaseRewardToken, setTotalPurchaseRewardToken] = useState(0);
+
+  async function getSumRewardBalance() {
+    const TOTAL_PURCHASE_REWARD_TOKEN = gql`
+      query{
+        totalPurchaseRewardToken(id: "TotalPurchaseRewardToken") {
+          reward
+        }
+      }
+    `;
+    // const { loading, error, data } = useQuery(TOTAL_PURCHASE_REWARD_TOKEN);
+    const result = await apollo_client.query({query: TOTAL_PURCHASE_REWARD_TOKEN});
+    console.log("useQuery data: ", result.data.totalPurchaseRewardToken.reward);
+    setTotalPurchaseRewardToken(result.data.totalPurchaseRewardToken.reward);
+  }
 
   //
   async function calculateBalancePerPoint () {
@@ -164,16 +182,20 @@ function Main (props) {
   }
 
   useEffect(async () => {
+
     await loadAskEraPayment();
     await loadRewardTrace();
     await loadAresOracleAskEraPoint();
     await calculateBalancePerPoint();
     await calculateAccountRewardList();
+    getSumRewardBalance();
 
   }, [setUnclaimedRewards, setAccountRewardList, setAskEraPoint, setAskEraPayment, setBalancePerPoint, setAskEraPointInfo]);
 
   return (
         <Grid.Column width={16}>
+            <h2>已发放的奖励</h2>
+            <div>{totalPurchaseRewardToken}</div>
             <h2>未领取的奖励</h2>
             <Table celled striped size='small'>
               <Table.Body>

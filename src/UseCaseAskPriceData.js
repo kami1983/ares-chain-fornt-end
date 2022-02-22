@@ -67,24 +67,35 @@ function Main (props) {
     client.query({
       query: gql`
         query{
-          newPurchasedRequestEvents(last:1000, orderBy: ID_ASC){
-            nodes {
+          newPurchasedRequestEvents{
+            nodes{
               id,
-              prepayments,
               accountId,
-              offer,
               createBn,
+              prepayments,
               submitThreshold,
-              maxDuration,
               requestKeys,
-              avgResult{
-                resultList
+              avg_result{
+                nodes{
+                  resultList
+                }
+              },
+              pay_for_result{
+                nodes{
+                  fee
+                }
+              },
+              insufficient_count_result{
+                nodes{
+                  purchasedId
+                }
               }
             }
           }
         }
       `
     }).then(result => {
+      console.log("result.data.newPurchasedRequestEvents.nodes = ", result.data.newPurchasedRequestEvents.nodes);
       setPurchasedEvents(result.data.newPurchasedRequestEvents.nodes);
     });
   }
@@ -151,7 +162,7 @@ function Main (props) {
 
   return (
         <Grid.Column width={16}>
-            <h2>Ask requests.</h2>
+            <h2>Paid order list</h2>
             <Table celled striped size='small'>
               <Table.Body>
                 <Table.Row>
@@ -159,8 +170,11 @@ function Main (props) {
                   <Table.Cell width={2}>Who</Table.Cell>
                   <Table.Cell width={2}>Apply block</Table.Cell>
                   <Table.Cell width={1}>Purchase quantity</Table.Cell>
-                  <Table.Cell width={2}>Prepaid</Table.Cell>
-                  <Table.Cell width={7}>Aggregate</Table.Cell>
+                  <Table.Cell width={2}>Request pairs</Table.Cell>
+                  <Table.Cell width={1}>Status</Table.Cell>
+                  <Table.Cell width={1}>Prepaid</Table.Cell>
+                  <Table.Cell width={1}>Final payment</Table.Cell>
+                  <Table.Cell width={4}>Aggregated result</Table.Cell>
                 </Table.Row>
                 {purchasedEvents.map(data => <Table.Row key={data.id}>
                   <Table.Cell><Input value={data.id} /></Table.Cell>
@@ -169,11 +183,17 @@ function Main (props) {
                   </Table.Cell>
                   <Table.Cell>{data.createBn}</Table.Cell>
                   <Table.Cell>{data.requestKeys.length}</Table.Cell>
+                  <Table.Cell>{data.requestKeys.toString()}</Table.Cell>
+                  <Table.Cell>{
+                    data.insufficient_count_result.nodes.length?'fail':
+                        data.pay_for_result.nodes.length?'success':'pending'
+                  }</Table.Cell>
                   <Table.Cell>{data.prepayments}</Table.Cell>
-                  <Table.Cell>{data.avgResult.resultList.map(sub_data=><div>
+                  <Table.Cell>{data.pay_for_result.nodes.length?data.pay_for_result.nodes[0].fee:'Unpaid'}</Table.Cell>
+                  <Table.Cell>{data.avg_result.nodes.length?data.avg_result.nodes[0].resultList.map(sub_data=><div>
                     {sub_data.price_key}#Count:[{sub_data.respondents.length}]#[{sub_data.reached_type == 1?'Full':'Part'}]#Block:{sub_data.create_bn}
                     <hr/>
-                  </div>)}</Table.Cell>
+                  </div>):"No response"}</Table.Cell>
                 </Table.Row>)}
               </Table.Body>
             </Table>

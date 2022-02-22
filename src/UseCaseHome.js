@@ -20,6 +20,7 @@ function Main (props) {
       <Grid.Row><Link to="/ask_price_data">Ares-Oracle - Paid ask request</Link></Grid.Row>
       <Grid.Row><Link to="/pre_check_data">Ares-Oracle - Validator Audit</Link></Grid.Row>
       <Grid.Row><Link to="/validator_reward_of_oracle">Ares-Oracle - Validator Reward[Oracle]</Link></Grid.Row>
+        <Grid.Row><Link to="/paid_order_list">Ares-Oracle - Paid order list</Link></Grid.Row>
     </Grid.Column>
   );
 }
