@@ -46,8 +46,8 @@ function Main (props) {
     `;
     // const { loading, error, data } = useQuery(TOTAL_PURCHASE_REWARD_TOKEN);
     const result = await apollo_client.query({query: TOTAL_PURCHASE_REWARD_TOKEN});
-    console.log("useQuery data: ", result.data.totalPurchaseRewardToken.reward);
-    setTotalPurchaseRewardToken(result.data.totalPurchaseRewardToken.reward);
+    console.log("useQuery data: ", result.data.totalPurchaseRewardToken?result.data.totalPurchaseRewardToken.reward:0);
+    setTotalPurchaseRewardToken(result.data.totalPurchaseRewardToken?result.data.totalPurchaseRewardToken.reward:0);
   }
 
   //
@@ -115,6 +115,9 @@ function Main (props) {
 
   // oracleFinance.askEraPayment
   async function loadAskEraPayment () {
+    if (!api.query.oracleFinance.askEraPayment){
+      return;
+    }
     const exposures = await api.query.oracleFinance.askEraPayment.entries();
 
     exposures.forEach(([key, value]) => {
@@ -152,6 +155,9 @@ function Main (props) {
 
   // Read ask era points
   async function loadAresOracleAskEraPoint () {
+    if(!api.query.oracleFinance.askEraPoint){
+      return true;
+    }
     const exposures = await api.query.oracleFinance.askEraPoint.entries();
     console.log('era_point_list', exposures);
     const validatorList = [];

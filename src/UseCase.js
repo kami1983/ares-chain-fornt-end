@@ -58,7 +58,7 @@ function Main (props) {
                           <Route path="abnormal_price_data" element={<UseCaseAbnormalPriceData3 />} />
                           <Route path="ask_price_data" element={<UseCaseAskPriceData />} />
                           <Route path="validator_reward_of_oracle" element={<UseCaseValidatorRewardOfOracle apollo_client={client} />} />
-                          <Route path="pre_check_data" element={<UseCasePreCheckData />} />
+                          <Route path="pre_check_data" element={<UseCasePreCheckData  apollo_client={client} />} />
                           <Route path="paid_order_list" element={<UseCasePaidOrderList />} />
                       </Routes>
                   </div>
