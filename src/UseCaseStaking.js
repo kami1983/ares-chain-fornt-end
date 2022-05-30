@@ -50,7 +50,8 @@ function Main (props) {
 
   async function loadPreCheckTaskList () {
     const authorities = await api.query.aresOracle.preCheckTaskList();
-    await setPreCheckTaskList(authorities);
+    console.log('authorities : ', authorities);
+    await setPreCheckTaskList(authorities.value);
     return authorities;
   }
 
