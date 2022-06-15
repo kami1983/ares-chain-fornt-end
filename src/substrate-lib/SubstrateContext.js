@@ -8,6 +8,7 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 
 import config from '../config';
+import {ApolloClient, InMemoryCache} from "@apollo/client";
 
 const parsedQuery = queryString.parse(window.location.search);
 const connectedSocket = parsedQuery.rpc || config.PROVIDER_SOCKET;
@@ -308,6 +309,7 @@ const SubstrateContextProvider = (props) => {
   // filtering props and merge with default param value
   const initState = { ...INIT_STATE };
   const neededPropNames = ['socket'];
+
   neededPropNames.forEach(key => {
     console.log('neededPropNames.forEach', key);
     initState[key] = (typeof props[key] === 'undefined' ? initState[key] : props[key]);
@@ -327,6 +329,12 @@ SubstrateContextProvider.propTypes = {
   socket: PropTypes.string
 };
 
-const useSubstrate = () => ({ ...useContext(SubstrateContext) });
+const hello = "HelloWorld";
+const apollo_client = new ApolloClient({
+  uri: config.SUBQUERY_HTTP,
+  cache: new InMemoryCache()
+});
+
+const useSubstrate = () => ({ ...useContext(SubstrateContext), hello, apollo_client});
 
 export { SubstrateContextProvider, useSubstrate };

@@ -7,17 +7,11 @@ import { SubstrateContextProvider, useSubstrate } from './substrate-lib';
 import { DeveloperConsole } from './substrate-lib/components';
 
 import AccountSelector from './AccountSelector';
-import Balances from './Balances';
 import BlockNumber from './BlockNumber';
-import Events from './Events';
-import Interactor from './Interactor';
 import Metadata from './Metadata';
 import NodeInfo from './NodeInfo';
-import TemplateModule from './TemplateModule';
-import Transfer from './Transfer';
-import Upgrade from './Upgrade';
 import UseCase from "./UseCase";
-import UseCaseStaking from "./UseCaseStaking";
+import {AresContextProvider} from "./substrate-lib/AresContext";
 
 function Main () {
   const [accountAddress, setAccountAddress] = useState(null);
@@ -77,7 +71,7 @@ function Main () {
 export default function App () {
   return (
     <SubstrateContextProvider>
-      <Main />
+        <Main />
     </SubstrateContextProvider>
   );
 }

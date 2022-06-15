@@ -24,6 +24,9 @@ import {
     gql
 } from "@apollo/client";
 import UseCasePaidOrderList from "./Demo/UseCasePaidOrderList";
+import SessionTimetable from "./Tools/SessionTimetable";
+import SessionValidators from "./Tools/SessionValidators";
+import ValidatorDetails from "./Tools/ValidatorDetails";
 
 const client = new ApolloClient({
     uri: 'http://localhost:3001',
@@ -50,7 +53,6 @@ function Main (props) {
           <Grid.Column width={16}>
               <BrowserRouter>
                   <div className="App">
-                      <h1><Link to="/">Test case.</Link></h1>
                       <Routes>
                           <Route path="/" element={<UseCaseHome />} />
                           <Route path="case_staking" element={<UseCaseStaking />} />
@@ -60,6 +62,9 @@ function Main (props) {
                           <Route path="validator_reward_of_oracle" element={<UseCaseValidatorRewardOfOracle apollo_client={client} />} />
                           <Route path="pre_check_data" element={<UseCasePreCheckData  apollo_client={client} />} />
                           <Route path="paid_order_list" element={<UseCasePaidOrderList />} />
+                          <Route path="session_table" element={<SessionTimetable />} />
+                          <Route path="session_validator/:session_id" element={<SessionValidators />} />
+                          <Route path="account_detail/:acc" element={<ValidatorDetails />} />
                       </Routes>
                   </div>
               </BrowserRouter>
