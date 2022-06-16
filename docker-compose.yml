@@ -4,7 +4,6 @@ services:
   ares_substrate_tools:
     build:
       context: .
-#      context: https://xxxx
       dockerfile: ./Dockerfile
     container_name: ares_substrate_tools
     image: aresprotocollab/ares_substrate_tools
