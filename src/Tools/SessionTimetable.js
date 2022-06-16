@@ -248,6 +248,10 @@ function Main (props) {
   return (
         <Grid.Column width={16}>
           <h2>Session Timetable</h2>
+          <a className="ui left labeled icon button" href={"/"}>
+            <i className="left arrow icon"></i>
+            HOME
+          </a>
           <h4>产生的奖励总额：{totalAmountOfRewardRecord?<ShowBalance balance={totalAmountOfRewardRecord.totalRewardOfMinted}/>:null}</h4>
           <h4>被领取走的总额：{totalAmountOfRewardRecord?<ShowBalance balance={totalAmountOfRewardRecord.totalRewardOfClaimed}/>:null}</h4>
           <Table>

@@ -10,15 +10,6 @@ services:
     image: aresprotocollab/ares_substrate_tools
     ports:
       - "6680:80"
-#    volumes:
-#      - ./data/ares:/data
-#    command: >
-#      gladios-node --chain gladios --name Ares_OCW1 --execution Native --pruning archive
-#      --ws-external --rpc-external --rpc-cors=all --rpc-methods=Unsafe
-#      --prometheus-external --telemetry-url 'wss://telemetry.polkadot.io/submit/ 0'
-#      --public-addr '/ip4/xx.xx.xx.xx/tcp/30333' --port 30333
-#      --warehouse 'http://api.aresprotocol.io' --validator
-#      --log aura=debug --log peerset=debug
     logging:
       driver: json-file
       options:

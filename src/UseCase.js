@@ -27,6 +27,7 @@ import UseCasePaidOrderList from "./Demo/UseCasePaidOrderList";
 import SessionTimetable from "./Tools/SessionTimetable";
 import SessionValidators from "./Tools/SessionValidators";
 import ValidatorDetails from "./Tools/ValidatorDetails";
+import StakingTimetable from "./Tools/StakingTimetable";
 
 const client = new ApolloClient({
     uri: 'http://localhost:3001',
@@ -63,6 +64,7 @@ function Main (props) {
                           <Route path="pre_check_data" element={<UseCasePreCheckData  apollo_client={client} />} />
                           <Route path="paid_order_list" element={<UseCasePaidOrderList />} />
                           <Route path="session_table" element={<SessionTimetable />} />
+                          <Route path="staking_table" element={<StakingTimetable />} />
                           <Route path="session_validator/:session_id" element={<SessionValidators />} />
                           <Route path="account_detail/:acc" element={<ValidatorDetails />} />
                       </Routes>

@@ -71,6 +71,10 @@ function Main (props) {
   return (
         <Grid.Column width={16}>
           <h2>Session Validators - Session id = {session_id}</h2>
+          <a className="ui left labeled icon button" href={"/"}>
+            <i className="left arrow icon"></i>
+            HOME
+          </a>
           <div>
             <h4>Validator count: {sessionObj?.validatorCount}</h4>
             <h4>Date: {sessionObj?.timestring}</h4>

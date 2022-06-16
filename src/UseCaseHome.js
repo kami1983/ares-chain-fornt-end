@@ -36,6 +36,11 @@ function Main (props) {
                 </div>
                 <div className="column">
                     <div className="ui segment">
+                        <Link to="/staking_table">Tools - Staking Timetable</Link>
+                    </div>
+                </div>
+                <div className="column">
+                    <div className="ui segment">
                         <Grid.Row><Link to="/chain_price_data">Ares-Oracle - On-chain price data</Link></Grid.Row>
                     </div>
                 </div>
