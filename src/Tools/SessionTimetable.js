@@ -42,7 +42,7 @@ function Main (props) {
     apollo_client.query({
       query: gql`
         query{
-          sessionNewSessionEvents(orderBy:TIMESTAMP_DESC){
+          sessionNewSessionEvents(orderBy:TIMESTAMP_DESC, last: 10000){
             nodes{
               sessionId,
               timestamp,
