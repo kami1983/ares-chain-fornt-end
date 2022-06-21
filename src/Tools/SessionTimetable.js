@@ -37,12 +37,13 @@ function Main (props) {
   const [chilledDataList, setChilledDataList] = useState([]);
   const [stakingRewardRecordList, setStakingRewardRecordList] = useState(null);
   const [totalAmountOfRewardRecord, setTotalAmountOfRewardRecord] = useState(null);
+  const [pageInfo, setPageInfo] = useState([0, 100]);
+  const [showLoading, setShowLoading] = useState(true);
 
   async function getSessionTable() {
-    apollo_client.query({
-      query: gql`
+    const query_sql = `
         query{
-          sessionNewSessionEvents(orderBy:TIMESTAMP_DESC, last: 10000){
+          sessionNewSessionEvents(orderBy:SESSION_ID_DESC, offset:${pageInfo[0]}, first:${pageInfo[1]}){
             nodes{
               sessionId,
               timestamp,
@@ -56,10 +57,22 @@ function Main (props) {
           }
         }
       `
+    console.log(query_sql)
+    apollo_client.query({
+      query: gql`
+        ${query_sql}
+      `
     }).then(result => {
       let nodes = result.data.sessionNewSessionEvents.nodes
-      console.log("result.data. = ", nodes)
-      setSessionTable(nodes)
+      let fullSessionTable = []
+      for(const idx in sessionTable) {
+        fullSessionTable.push(sessionTable[idx])
+      }
+      for(const idx in nodes) {
+        fullSessionTable.push(nodes[idx])
+      }
+      setSessionTable(fullSessionTable)
+      setShowLoading(false)
     });
   }
 
@@ -122,6 +135,13 @@ function Main (props) {
       console.log("stakingRewardRecord = ", nodes)
       setStakingRewardRecordList(nodes)
     });
+  }
+
+  function nextPage() {
+    const offset = pageInfo[0]
+    const first = pageInfo[1]
+    setPageInfo([offset+first, first])
+    setShowLoading(true)
   }
 
   // query{
@@ -229,7 +249,7 @@ function Main (props) {
 
   function showEraReward(eraNum) {
     for(const idx in stakingRewardRecordList) {
-      console.log("showEraReward == ", `${stakingRewardRecordList[idx].stakingEra} == ${eraNum}`)
+      // console.log("showEraReward == ", `${stakingRewardRecordList[idx].stakingEra} == ${eraNum}`)
       if(stakingRewardRecordList[idx].stakingEra == eraNum) {
         return stakingRewardRecordList[idx].erasValidatorReward
       }
@@ -243,10 +263,11 @@ function Main (props) {
     getChilledData()
     getEraRewardData()
     getTotalAmountOfRewardRecord()
-  }, []);
+  }, [pageInfo]);
 
   return (
         <Grid.Column width={16}>
+          <Grid.Row>
           <h2>Session Timetable</h2>
           <a className="ui left labeled icon button" href={"/"}>
             <i className="left arrow icon"></i>
@@ -280,9 +301,23 @@ function Main (props) {
               <Table.Cell>{getValidatorOfUp(data.validatorSet, idx).map(upAcc=><div><LinkToAccount acc={upAcc} min={true}/></div>)}</Table.Cell>
             </Table.Row>)}
           </Table>
-
+          </Grid.Row>
+          {showLoading?<Grid.Row>
+            <div className="ui segment">
+              <div className="ui placeholder">
+                <div className="line"></div>
+                <div className="line"></div>
+                <div className="line"></div>
+                <div className="line"></div>
+                <div className="line"></div>
+              </div>
+            </div>
+          </Grid.Row>:null}
+          {!showLoading?<Grid.Row>
+            <button className="fluid ui button" onClick={()=>nextPage()}>More infos</button>
+          </Grid.Row>:null}
         </Grid.Column>
-  );
+  )
 }
 
 export default function SessionTimetable (props) {

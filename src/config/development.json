@@ -1,6 +1,6 @@
 {
   "TOKEN_PRECISION": 12,
   "PROVIDER_SOCKET": "wss://gladios.aresprotocol.io",
-  "SUBQUERY_HTTP": "http://localhost:3001",
+  "SUBQUERY_HTTP": "http://202.182.100.187:3001",
   "HOW_MANY_ERA_PER_DAY": 4
 }
