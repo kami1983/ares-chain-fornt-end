@@ -35,32 +35,50 @@ function Main (props) {
   const accounts = keyring.getPairs();
   const [stakingTable, setStakingTable] = useState([]);
   const [rewardMintTable, setRewardMintTable] = useState([]);
+  const [pageInfo, setPageInfo] = useState([0, 100]);
+  const [showLoading, setShowLoading] = useState(true);
 
   async function loadStakingTable() {
-    apollo_client.query({
-      query: gql`
-        query{
-          stakingErasTotalStakeRecords(orderBy: ERA_DESC){
+    const query_sql = `query{
+          stakingErasTotalStakeRecords(orderBy: ERA_DESC, offset:${pageInfo[0]}, first:${pageInfo[1]}){
             nodes{
               era,
               deposit
             }
           }
-        }
+        }`
+
+    apollo_client.query({
+      query: gql`
+        ${query_sql}
       `
     }).then(result => {
       let nodes = result.data.stakingErasTotalStakeRecords.nodes
-      console.log("staking-table.data. = ", nodes)
-      setStakingTable(nodes)
+      let fullStakeTable = []
+      for(const idx in stakingTable) {
+        fullStakeTable.push(stakingTable[idx])
+      }
+      for(const idx in nodes) {
+        fullStakeTable.push(nodes[idx])
+      }
+
+      setStakingTable(fullStakeTable)
+      setShowLoading(false)
     });
   }
 
+  function nextPage() {
+    const offset = pageInfo[0]
+    const first = pageInfo[1]
+    setPageInfo([offset+first, first])
+    setShowLoading(true)
+  }
 
   async function loadRewardMintTable() {
     apollo_client.query({
       query: gql`
         query{
-          stakingRewardRecords(orderBy: STAKING_ERA_DESC){
+          stakingRewardRecords(orderBy: STAKING_ERA_DESC, offset:${pageInfo[0]}, first:${pageInfo[1]}){
             nodes{
               eventBn,
               stakingEra,
@@ -71,7 +89,16 @@ function Main (props) {
       `
     }).then(result => {
       let nodes = result.data.stakingRewardRecords.nodes
-      setRewardMintTable(nodes)
+
+      let fullMintTable = []
+      for(const idx in rewardMintTable) {
+        fullMintTable.push(rewardMintTable[idx])
+      }
+      for(const idx in nodes) {
+        fullMintTable.push(nodes[idx])
+      }
+      setRewardMintTable(fullMintTable)
+      setShowLoading(false)
     });
   }
 
@@ -96,17 +123,16 @@ function Main (props) {
   useEffect(() => {
     loadStakingTable()
     loadRewardMintTable()
-  }, []);
+  }, [pageInfo]);
 
   return (
         <Grid.Column width={16}>
-          <h2>Staking Timetable</h2>
-          <a className="ui left labeled icon button" href={"/"}>
-            <i className="left arrow icon"></i>
-            HOME
-          </a>
-          {/*<h4>产生的奖励总额：{totalAmountOfRewardRecord?<ShowBalance balance={totalAmountOfRewardRecord.totalRewardOfMinted}/>:null}</h4>*/}
-          {/*<h4>被领取走的总额：{totalAmountOfRewardRecord?<ShowBalance balance={totalAmountOfRewardRecord.totalRewardOfClaimed}/>:null}</h4>*/}
+          <Grid.Row>
+            <h2>Staking Timetable</h2>
+            <a className="ui left labeled icon button" href={"/"}>
+              <i className="left arrow icon"></i>
+              HOME
+            </a>
           <Table>
             <Table.Row>
               <Table.Cell>Era</Table.Cell>
@@ -121,6 +147,11 @@ function Main (props) {
               <Table.Cell>{getEarningsYield(getRewardMintBalance(data.era), data.deposit)} %</Table.Cell>
             </Table.Row>)}
           </Table>
+          </Grid.Row>
+          {!showLoading?<Grid.Row>
+            <button className="fluid ui button" onClick={()=>nextPage()}>More infos</button>
+          </Grid.Row>:null}
+
         </Grid.Column>
   );
 }
