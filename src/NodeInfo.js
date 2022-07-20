@@ -30,6 +30,8 @@ function Main (props) {
           <Card.Header>{nodeInfo.nodeName}</Card.Header>
           <Card.Meta>
             <span>{nodeInfo.chain}</span>
+            <span>/</span>
+            <span>Front-end v2.0.1</span>
           </Card.Meta>
           <Card.Description>{socket}</Card.Description>
         </Card.Content>

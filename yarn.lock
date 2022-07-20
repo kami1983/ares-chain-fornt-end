@@ -6569,6 +6569,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.0.1":
+  version: 16.0.1
+  resolution: "dotenv@npm:16.0.1"
+  checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792
+  languageName: node
+  linkType: hard
+
 "duplexer@npm:^0.1.1":
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
@@ -15288,6 +15295,7 @@ resolve@^2.0.0-next.3:
     "@polkadot/util": ^7.8.2
     "@polkadot/util-crypto": ^7.8.2
     apollo-boost: ^0.4.9
+    dotenv: ^16.0.1
     eslint: ^7.32.0
     eslint-config-react-app: ^6.0.0
     eslint-config-semistandard: ^16.0.0
