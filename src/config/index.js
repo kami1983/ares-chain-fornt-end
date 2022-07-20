@@ -14,6 +14,6 @@ const envVars = envVarNames.reduce((mem, n) => {
   if (process.env[n] !== undefined) mem[n.slice(10)] = process.env[n];
   return mem;
 }, {});
-console.log('####################', envVars);
+console.log('####################', envVars, process.env);
 const config = { ...configCommon, ...configEnv, ...envVars };
 export default config;
