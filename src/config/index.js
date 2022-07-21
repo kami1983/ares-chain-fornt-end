@@ -1,6 +1,12 @@
 import configCommon from './common.json';
 // Using `require` as `import` does not support dynamic loading (yet).
-const configEnv = require(`./${process.env.NODE_ENV}.json`);
+
+let hostName = 'gladios';
+if(window.location.host.search('odyssey') > -1){
+  hostName = 'odyssey'
+}
+
+const configEnv = require(`./${process.env.NODE_ENV}.${hostName}.json`);
 require('dotenv').config();
 
 // Accepting React env vars and aggregating them into `config` object.
@@ -14,6 +20,6 @@ const envVars = envVarNames.reduce((mem, n) => {
   if (process.env[n] !== undefined) mem[n.slice(10)] = process.env[n];
   return mem;
 }, {});
-console.log('####################', envVars, process.env);
+console.log('####################', window.location.host, envVars, process.env);
 const config = { ...configCommon, ...configEnv, ...envVars };
 export default config;
