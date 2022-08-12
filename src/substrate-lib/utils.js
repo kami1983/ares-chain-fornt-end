@@ -11,7 +11,7 @@ const utils = {
   },
   convertBalanceToFloat(amount){
     const integer_num =  (BigInt(amount) / BigInt(10**config.TOKEN_PRECISION)).toString()
-    const decimal_num =  (BigInt(amount) % BigInt(10**config.TOKEN_PRECISION)).toString().substr(0,2)
+    const decimal_num =  (BigInt(amount) / BigInt(10**config.TOKEN_PRECISION)).toString().substr(0,2)
     return parseFloat(`${integer_num}.${decimal_num}`)
   }
 };

@@ -31,6 +31,8 @@ function Main (props) {
   const { api, hello, apollo_client } = useSubstrate();
   const [accountInfo, setAccountInfo] = useState(null)
   const [sessionObj, setSessionObj] = useState(null)
+  const [payoutStartedList, setPayoutStartedList] = useState([])
+  const [rewardedList, setRewardedList] = useState([])
 
   const { acc } = useParams();
 
@@ -93,6 +95,68 @@ function Main (props) {
     });
   }
 
+  async function getStakingPayoutStartedEvents(stashId) {
+    apollo_client.query({
+      query: gql`
+        query{
+          stakingPayoutStartedEvents
+          (
+            filter:{
+              validatorStashId:{
+                equalTo:"${stashId}"
+              }
+            }
+          )
+          {
+            pageInfo {
+              hasPreviousPage,
+              hasNextPage,
+            },
+            nodes{
+              id,
+              eraNum,
+              validatorStashId,
+              eventBn,
+            }
+          }
+        }
+      `
+    }).then(result => {
+      let payoutStartedNodes = result.data.stakingPayoutStartedEvents.nodes
+      setPayoutStartedList(payoutStartedNodes)
+    })
+  }
+
+  async function getStakingRewardedEvents(stashId) {
+    apollo_client.query({
+      query: gql`
+        query{
+          stakingRewardedEvents
+          (filter:{
+            whoId:{
+              equalTo:"${stashId}"
+            }
+          })
+          {
+            nodes{
+              id,
+              whoId,
+              eraNum,
+              eventBn,
+              deposit,
+              timestamp,
+              timestring
+            }
+          }
+        }
+      `
+    }).then(result => {
+      let rewardedNodes = result.data.stakingRewardedEvents.nodes
+      setRewardedList(rewardedNodes)
+    })
+  }
+
+
   function checkInSet(acc) {
       if(sessionObj){
         for(const idx in sessionObj.validatorSet){
@@ -105,6 +169,8 @@ function Main (props) {
   useEffect(() => {
     getValidatorsAccount()
     getSessionValidators()
+    getStakingPayoutStartedEvents(acc)
+    getStakingRewardedEvents(acc)
   }, []);
 
   return (
@@ -135,6 +201,46 @@ function Main (props) {
           </Grid.Row>
         </Grid.Column>
         <Grid.Column>
+          <h3>启动付款的ERA</h3>
+          {/*"id": "212613-2",*/}
+          {/*"eraNum": 14,*/}
+          {/*"validatorStashId": "4RTJuWG29fQKBU8rr3kAc27rTHyzNts6gsqVkJKrrkp18cfb",*/}
+          {/*"eventBn": "212613"*/}
+          <Table>
+            <Table.Row>
+              <Table.Cell>Id</Table.Cell>
+              <Table.Cell>Era</Table.Cell>
+              <Table.Cell>Event block</Table.Cell>
+            </Table.Row>
+            {payoutStartedList.map((data, idx) => <Table.Row>
+              <Table.Cell>{data.id}</Table.Cell>
+              <Table.Cell>{data.eraNum}</Table.Cell>
+              <Table.Cell>{data.eventBn}</Table.Cell>
+            </Table.Row>)}
+          </Table>
+          <h3>奖励领取记录</h3>
+          {/*"id": "212613-8",*/}
+          {/*"whoId": "4RTJuWG29fQKBU8rr3kAc27rTHyzNts6gsqVkJKrrkp18cfb",*/}
+          {/*"eventBn": "212613",*/}
+          {/*"deposit": "17662240252150565",*/}
+          {/*"timestamp": "1660202454000",*/}
+          {/*"timestring": "2022-08-11 15:20:54"*/}
+          <Table>
+            <Table.Row>
+              <Table.Cell>Id</Table.Cell>
+              <Table.Cell>Era</Table.Cell>
+              <Table.Cell>Event block</Table.Cell>
+              <Table.Cell>金额</Table.Cell>
+              <Table.Cell>时间</Table.Cell>
+            </Table.Row>
+            {rewardedList.map((data, idx) => <Table.Row>
+              <Table.Cell>{data.id}</Table.Cell>
+              <Table.Cell>{data.eraNum}</Table.Cell>
+              <Table.Cell>{data.eventBn}</Table.Cell>
+              <Table.Cell><ShowBalance balance={data.deposit} /></Table.Cell>
+              <Table.Cell>{data.timestring}</Table.Cell>
+            </Table.Row>)}
+          </Table>
           <h3>质押动作</h3>
           <Table>
             <Table.Row>

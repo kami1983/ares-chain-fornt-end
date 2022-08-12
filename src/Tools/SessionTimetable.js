@@ -285,6 +285,7 @@ function Main (props) {
               <Table.Cell>离线数</Table.Cell>
               <Table.Cell>撤离数</Table.Cell>
               <Table.Cell>奖励</Table.Cell>
+              <Table.Cell>验证人列表</Table.Cell>
               <Table.Cell>下线列表</Table.Cell>
               <Table.Cell>上线列表</Table.Cell>
             </Table.Row>
@@ -297,6 +298,7 @@ function Main (props) {
               <Table.Cell>{data?countOfImonline(data?.eventBn):null}</Table.Cell>
               <Table.Cell>{data?countOfChilled(data?.eventBn):null}</Table.Cell>
               <Table.Cell>{data?<ShowBalance balance={showEraReward(data?.stakingActiveEra)} /> :null}</Table.Cell>
+              <Table.Cell>{data.validatorSet.map((validatorAcc, validatorIdx) => <div><LinkToAccount acc={validatorAcc} min={true}/></div>)}</Table.Cell>
               <Table.Cell>{getValidatorOfDown(data.validatorSet, idx).map(downAcc=><div><LinkToAccount acc={downAcc} min={true}/></div>)}</Table.Cell>
               <Table.Cell>{getValidatorOfUp(data.validatorSet, idx).map(upAcc=><div><LinkToAccount acc={upAcc} min={true}/></div>)}</Table.Cell>
             </Table.Row>)}

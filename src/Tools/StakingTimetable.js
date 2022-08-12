@@ -21,6 +21,7 @@ import {Link} from "react-router-dom";
 import LinkToSubstrate from "./LinkToSubstrate";
 import LinkToAccount from "./LinkToAccount";
 import ShowBalance from "./ShowBalance";
+import TakeRewardBalance from "./TakeRewardBalance"
 import config from "../config";
 
 
@@ -37,6 +38,47 @@ function Main (props) {
   const [rewardMintTable, setRewardMintTable] = useState([]);
   const [pageInfo, setPageInfo] = useState([0, 100]);
   const [showLoading, setShowLoading] = useState(true);
+
+  // const [stakingEraPaidList, setStakingEraPaidList] = useState([]);
+
+  // async function loadStakingEraPaid(eraNum) {
+  //   apollo_client.query({
+  //     query: gql`
+  //       query{
+  //         stakingEraPaidEvents
+  //         (filter:{
+  //           eraNum:{equalTo:${eraNum}}
+  //         })
+  //         {
+  //           nodes{
+  //             id,
+  //             remainder,
+  //             validatorPayout,
+  //             eraNum,
+  //             eventBn
+  //           }
+  //         }
+  //       }
+  //     `
+  //   }).then(result => {
+  //     let _stakingEraPaidNodes = stakingEraPaidList
+  //     _stakingEraPaidNodes[eraNum]=result.data.stakingEraPaidEvents.nodes
+  //     setStakingEraPaidList(_stakingEraPaidNodes)
+  //   })
+  // }
+
+  // async function getTreasuryPayout(eraNum) {
+  //   if (setStakingEraPaidList[eraNum]) {
+  //     return eraNum
+  //   }
+  //   // else {
+  //   //   await loadStakingEraPaid(eraNum)
+  //   //   if (setStakingEraPaidList[eraNum]) {
+  //   //     return eraNum
+  //   //   }
+  //   // }
+  //   return 'Era 未结束'
+  // }
 
   async function loadStakingTable() {
     const query_sql = `query{
@@ -77,12 +119,15 @@ function Main (props) {
   async function loadRewardMintTable() {
     apollo_client.query({
       query: gql`
-        query{
+        query {
           stakingRewardRecords(orderBy: STAKING_ERA_DESC, offset:${pageInfo[0]}, first:${pageInfo[1]}){
             nodes{
+              id,
               eventBn,
               stakingEra,
-              erasValidatorReward
+              erasValidatorReward,
+              remainder,
+              validatorPayout
             }
           }
         }
@@ -97,6 +142,7 @@ function Main (props) {
       for(const idx in nodes) {
         fullMintTable.push(nodes[idx])
       }
+
       setRewardMintTable(fullMintTable)
       setShowLoading(false)
     });
@@ -107,6 +153,28 @@ function Main (props) {
       for(const idx in rewardMintTable) {
         if(rewardMintTable[idx].stakingEra == checkEra) {
           return rewardMintTable[idx].erasValidatorReward
+        }
+      }
+    }
+    return null;
+  }
+
+  function getEraRemainder(checkEra) {
+    if(rewardMintTable){
+      for(const idx in rewardMintTable) {
+        if(rewardMintTable[idx].stakingEra == checkEra) {
+          return rewardMintTable[idx].remainder
+        }
+      }
+    }
+    return null;
+  }
+
+  function getEraValidatorPayout(checkEra) {
+    if(rewardMintTable){
+      for(const idx in rewardMintTable) {
+        if(rewardMintTable[idx].stakingEra == checkEra) {
+          return rewardMintTable[idx].validatorPayout
         }
       }
     }
@@ -139,12 +207,25 @@ function Main (props) {
               <Table.Cell>奖励金额</Table.Cell>
               <Table.Cell>质押金额</Table.Cell>
               <Table.Cell>收益率(APY)</Table.Cell>
+              <Table.Cell>进入国库</Table.Cell>
+              <Table.Cell>支付给验证人</Table.Cell>
+              <Table.Cell>被领走的奖励</Table.Cell>
             </Table.Row>
             {stakingTable.map((data, idx) =><Table.Row key={idx}>
+              {console.log('^^^^^',data)}
               <Table.Cell>{data.era}</Table.Cell>
               <Table.Cell>{rewardMintTable?<ShowBalance balance={getRewardMintBalance(data.era)} />:null}</Table.Cell>
               <Table.Cell><ShowBalance balance={data.deposit} /></Table.Cell>
               <Table.Cell>{getEarningsYield(getRewardMintBalance(data.era), data.deposit)} %</Table.Cell>
+              <Table.Cell>{rewardMintTable?<ShowBalance balance={getEraRemainder(data.era)} />:null}</Table.Cell>
+              <Table.Cell>{rewardMintTable?<ShowBalance balance={getEraValidatorPayout(data.era)} />:null}</Table.Cell>
+              <Table.Cell>
+                {/*<ShowBalance balance={getStakingRewardBalance(data.era)} />*/}
+                {/*<div>*/}
+                {/*  {stakingRewardList[data.era]}*/}
+                {/*</div>*/}
+                <TakeRewardBalance era={data.era} />
+              </Table.Cell>
             </Table.Row>)}
           </Table>
           </Grid.Row>
