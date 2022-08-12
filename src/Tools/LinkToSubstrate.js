@@ -17,7 +17,7 @@ import {
 
 import { gql, useQuery, getApolloContext } from "@apollo/client";
 import { useSubstrate } from '../substrate-lib';
-// import {useAresContext} from "../substrate-lib/AresContext";
+require('dotenv').config();
 
 import {
   Link,
@@ -31,7 +31,7 @@ function Main (props) {
   }, []);
 
   return (
-      <a href={"https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fgladios.aresprotocol.io#/explorer/query/"+bn}>{bn}</a>
+      <a href={`https://polkadot.js.org/apps/?rpc=${process.env.REACT_APP_PROVIDER_SOCKET}#/explorer/query/${bn}`}>{bn}</a>
   );
 }
 
