@@ -31,7 +31,7 @@ function Main (props) {
           <Card.Meta>
             <span>{nodeInfo.chain}</span>
             <span>/</span>
-            <span>Front-end v2.0.1</span>
+            <span>Front-end v2.1.1</span>
           </Card.Meta>
           <Card.Description>{socket}</Card.Description>
         </Card.Content>
