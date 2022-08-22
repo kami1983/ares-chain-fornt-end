@@ -2,5 +2,5 @@
   "TOKEN_PRECISION": 12,
   "PROVIDER_SOCKET": "wss://odyssey.aresprotocol.io",
   "SUBQUERY_HTTP": "http://odyssey.subquery.aresprotocol.io",
-  "HOW_MANY_ERA_PER_DAY": 4
+  "HOW_MANY_ERA_PER_DAY": 1
 }
