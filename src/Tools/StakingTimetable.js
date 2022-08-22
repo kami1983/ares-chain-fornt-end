@@ -117,9 +117,8 @@ function Main (props) {
   }
 
   async function loadRewardMintTable() {
-    apollo_client.query({
-      query: gql`
-        query {
+    let query_str = `
+    query {
           stakingRewardRecords(orderBy: STAKING_ERA_DESC, offset:${pageInfo[0]}, first:${pageInfo[1]}){
             nodes{
               id,
@@ -131,6 +130,10 @@ function Main (props) {
             }
           }
         }
+    `
+    apollo_client.query({
+      query: gql`
+        ${query_str}
       `
     }).then(result => {
       let nodes = result.data.stakingRewardRecords.nodes
@@ -140,6 +143,7 @@ function Main (props) {
         fullMintTable.push(rewardMintTable[idx])
       }
       for(const idx in nodes) {
+        console.log('KAMI-DEBUG:', nodes[idx])
         fullMintTable.push(nodes[idx])
       }
 
@@ -212,7 +216,6 @@ function Main (props) {
               <Table.Cell>被领走的奖励</Table.Cell>
             </Table.Row>
             {stakingTable.map((data, idx) =><Table.Row key={idx}>
-              {console.log('^^^^^',data)}
               <Table.Cell>{data.era}</Table.Cell>
               <Table.Cell>{rewardMintTable?<ShowBalance balance={getRewardMintBalance(data.era)} />:null}</Table.Cell>
               <Table.Cell><ShowBalance balance={data.deposit} /></Table.Cell>

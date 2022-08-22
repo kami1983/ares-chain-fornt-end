@@ -1,9 +1,9 @@
 import configCommon from './common.json';
 // Using `require` as `import` does not support dynamic loading (yet).
 
-let hostName = 'gladios';
-if(window.location.host.search('odyssey') > -1){
-  hostName = 'odyssey'
+let hostName = 'odyssey';
+if(window.location.host.search('gladios') > -1){
+  hostName = 'gladios'
 }
 
 const configEnv = require(`./${process.env.NODE_ENV}.${hostName}.json`);
