@@ -27,12 +27,14 @@ import {
   useParams
 } from "react-router-dom";
 import ShowBalance from "./ShowBalance";
+import {BN} from "@polkadot/util";
 function Main (props) {
   const { api, hello, apollo_client } = useSubstrate();
   const [accountInfo, setAccountInfo] = useState(null)
   const [sessionObj, setSessionObj] = useState(null)
   const [payoutStartedList, setPayoutStartedList] = useState([])
   const [rewardedList, setRewardedList] = useState([])
+  const [allRewardBalance, setAllRewardBalance] = useState(0)
 
   const { acc } = useParams();
 
@@ -152,6 +154,13 @@ function Main (props) {
       `
     }).then(result => {
       let rewardedNodes = result.data.stakingRewardedEvents.nodes
+      let _sum = new BN(0)
+      for(let idx in rewardedNodes) {
+        if(rewardedNodes[idx].deposit){
+          _sum = _sum.add(new BN(rewardedNodes[idx].deposit))
+        }
+      }
+      setAllRewardBalance(_sum.toString())
       setRewardedList(rewardedNodes)
     })
   }
@@ -240,6 +249,13 @@ function Main (props) {
               <Table.Cell><ShowBalance balance={data.deposit} /></Table.Cell>
               <Table.Cell>{data.timestring}</Table.Cell>
             </Table.Row>)}
+            <Table.Row>
+              <Table.Cell></Table.Cell>
+              <Table.Cell></Table.Cell>
+              <Table.Cell>总计：</Table.Cell>
+              <Table.Cell><ShowBalance balance={allRewardBalance} /></Table.Cell>
+              <Table.Cell></Table.Cell>
+            </Table.Row>
           </Table>
           <h3>质押动作</h3>
           <Table>
