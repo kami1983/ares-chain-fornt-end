@@ -25,28 +25,6 @@ function Main (props) {
   const [nodeList, setNodeList] = useState([]);
   const [refreshCount, setRefreshCount] = useState(0);
   const initList = [
-    ['141.164.58.241', 'S1', 'ws://141.164.58.241:9964', 0, '4TS6cxuBJ4AeZttG1fXtViTYLG1P93bb27eCRb76DjNZ13rp'],
-    ['141.164.58.241', 'S2', 'ws://141.164.58.241:9965', 0, '4SaqfpkVNvdEstHNWW1C2BmCDJETaKmEAd26KSXDADvLfrjn'],
-    ['39.103.174.139', 'S3', 'ws://39.103.174.139:9964', 0, '--'],
-
-    ['158.247.224.166', 'Node6', 'ws://158.247.224.166:9944', 0, '4Py6X6JcHUMtDY1QFfN78N9rVGGo76XdNfUjBHVnTkshx5Xo|4TdKxshT7RPYcfQqez2ZzjsxAo3p8iu4mmACWQDvbGiNzoR9'],
-    ['45.77.30.9', 'Node9', 'ws://45.77.30.9:9961', 0, '4Rma6tk2UtaGxPh5dozPz4DVFM2R4wK4iZtXP4kXzKqMv27F'],
-    ['45.77.30.9', 'Node9', 'ws://45.77.30.9:9964', 0, '4USEukpUiCMsp7QgEBoBtd17f9P376RupG1YpZRoVcTtowL5'],
-    ['202.182.100.187', 'Node11', 'ws://202.182.100.187:9961', 0, '4Qbk2qKYB7yyH2Hvm9sVzWtYMBZ2Uf7Lx3mxytH6gzpKUyXJ'],
-    ['202.182.100.187', 'Node11', 'ws://202.182.100.187:9963', 0, '4QwovEknLjgKZwKHNUbEi4TYxomBitYSwrREWPMmatYdeaz7'],
-
-    ['158.247.224.97', 'Node7', 'ws://158.247.224.97:9961', 0, '4UaewssoTRkgaYFJV26zQuGaN4GoGg1zPnMYYb6zWFiQpo49'],
-    ['158.247.224.97', 'Node7', 'ws://158.247.224.97:9962', 0, '4Tfhuq5GYtZ9AJ3YQyCmXicGnggyDPyxGpZSCsoGVg9M7fo3'],
-
-    ['149.28.18.50', 'Node10', 'ws://149.28.18.50:9964', 0, '4PxJDptF3qGKJmM69fFNXoFx287TnKDyYmAQ3Emg6a9cDfKL'],
-    ['149.28.18.50', 'Node10', 'ws://149.28.18.50:9965', 0, '4TrYpZFpJzLHDVoa21bek5Kih2o2uPmrxhwqe1pTFhWY1T5w'],
-
-    ['149.28.18.50', 'Node10', 'ws://149.28.18.50:9966', 0, '4RbJ7eHeYJfLEetKFx7vdQSm5UqkpxKKTdDda5TqTwaMmH9n'],
-    ['149.28.18.50', 'Node10', 'ws://149.28.18.50:9967', 0, '4Q1KhJDpahmFhLzqCK1QvAuK4nQEk4KrQDH1yWu4bviJvXu7'],
-
-    ['167.179.96.132', 'Node14', 'ws://167.179.96.132:9961', 0, '4UMCPmsToxmMjgNPNSd5hA2ARig5Eagbp4BzxDVFTiyEq9F6'],
-    ['167.179.96.132', 'Node14', 'ws://167.179.96.132:9962', 0, '4UCeKT5qEH5wd1fhb9XsmvrAW2GxMsRzFXvMPGTibzooXShf'],
-    ['167.179.96.132', 'Node14', 'ws://167.179.96.132:9963', 0, '4QEfWWgUwBrfGMRsYZBYno9xFqozYNNmEJSv2ojUKmqfEDDQ'],
 
   ]
 
