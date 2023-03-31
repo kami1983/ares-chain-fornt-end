@@ -18,6 +18,12 @@ function Main (props) {
             <div className="ui three column grid">
                 <div className="column">
                     <div className="ui segment">
+                        <Link to="/chain_status">Chain status</Link>
+                    </div>
+                </div>
+
+                <div className="column">
+                    <div className="ui segment">
                         <Link to="/odyssey_check">Odyssey check</Link>
                     </div>
                 </div>

@@ -29,6 +29,7 @@ import SessionValidators from "./Tools/SessionValidators";
 import ValidatorDetails from "./Tools/ValidatorDetails";
 import StakingTimetable from "./Tools/StakingTimetable";
 import NodeChecker from "./NodeChecker";
+import ChainStatus from "./ChainStatus";
 
 const client = new ApolloClient({
     uri: 'http://localhost:3001',
@@ -58,6 +59,7 @@ function Main (props) {
                       <Routes>
                           <Route path="/" element={<UseCaseHome />} />
                           <Route path="case_staking" element={<UseCaseStaking />} />
+                          <Route path="chain_status" element={<ChainStatus />} />
                           <Route path="odyssey_check" element={<NodeChecker />} />
                           <Route path="chain_price_data" element={<UseCaseChainPriceData />} />
                           <Route path="abnormal_price_data" element={<UseCaseAbnormalPriceData3 />} />
